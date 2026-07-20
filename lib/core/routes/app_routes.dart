@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../features/shop/views/home_view.dart';
+import '../../features/shop/views/main_layout.dart';
 import '../../features/shop/views/product_details_view.dart';
 import '../../features/shop/views/cart_view.dart';
 import '../../features/shop/views/checkout_view.dart';
@@ -21,7 +21,7 @@ class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case home:
-        return MaterialPageRoute(builder: (_) => const HomeView());
+        return MaterialPageRoute(builder: (_) => const MainLayout());
       case productDetails:
         final args = settings.arguments as String?;
         return MaterialPageRoute(builder: (_) => ProductDetailsView(productId: args));
