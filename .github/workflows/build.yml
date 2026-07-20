@@ -25,6 +25,11 @@ jobs:
       with:
         channel: 'stable'
 
+    - name: Generate Platform Files
+      run: |
+        flutter create --org com.abdullah --project-name affiliate_store .
+        sed -i 's/android:label="[^"]*"/android:label="متجري"/g' android/app/src/main/AndroidManifest.xml
+
     - name: Install Dependencies
       run: flutter pub get
 
