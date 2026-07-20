@@ -27,10 +27,22 @@ class HomeView extends StatelessWidget {
               ),
               actions: [
                 IconButton(
+                  icon: const Icon(Icons.local_shipping_outlined, color: AppConstants.primaryColor),
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.trackOrder);
+                  },
+                );
+                //
                   icon: const Icon(Icons.search, color: AppConstants.primaryColor),
                   onPressed: () {},
                 ),
                 IconButton(
+                  icon: const Icon(Icons.local_shipping_outlined, color: AppConstants.primaryColor),
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.trackOrder);
+                  },
+                );
+                //
                   icon: const Icon(Icons.shopping_cart_outlined, color: AppConstants.primaryColor),
                   onPressed: () {
                     // الانتقال لسلة المشتريات
