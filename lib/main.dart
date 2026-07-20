@@ -16,7 +16,7 @@ class AffiliateStoreApp extends StatelessWidget {
       title: 'متجري',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.admin,
+      initialRoute: AppRoutes.home,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }
