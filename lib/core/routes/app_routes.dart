@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../features/shop/views/home_view.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -8,7 +9,7 @@ class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case home:
-        return MaterialPageRoute(builder: (_) => const Scaffold(body: Center(child: Text('الرئيسية للمتجر'))));
+        return MaterialPageRoute(builder: (_) => const HomeView());
       case trackOrder:
         return MaterialPageRoute(builder: (_) => const Scaffold(body: Center(child: Text('تتبع الطلب'))));
       case admin:
