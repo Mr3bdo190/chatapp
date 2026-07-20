@@ -13,7 +13,6 @@ class HomeView extends StatelessWidget {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // 1. شريط التطبيق العلوي (App Bar)
             SliverAppBar(
               floating: true,
               backgroundColor: AppConstants.backgroundColor,
@@ -33,12 +32,13 @@ class HomeView extends StatelessWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.shopping_cart_outlined, color: AppConstants.primaryColor),
-                  onPressed: () {},
+                  onPressed: () {
+                    // الانتقال لسلة المشتريات
+                    Navigator.pushNamed(context, AppRoutes.cart);
+                  },
                 ),
               ],
             ),
-
-            // 2. البانر الإعلاني
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -72,8 +72,6 @@ class HomeView extends StatelessWidget {
                 ),
               ),
             ),
-
-            // 3. عنوان الأقسام
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -87,8 +85,6 @@ class HomeView extends StatelessWidget {
                 ),
               ),
             ),
-
-            // 4. شريط الأقسام
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 45,
@@ -121,8 +117,6 @@ class HomeView extends StatelessWidget {
                 ),
               ),
             ),
-
-            // 5. عنوان أحدث المنتجات
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 24.0, bottom: 8.0),
@@ -136,8 +130,6 @@ class HomeView extends StatelessWidget {
                 ),
               ),
             ),
-
-            // 6. شبكة المنتجات (مع إضافة زرار الانتقال)
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               sliver: SliverGrid(
@@ -151,7 +143,6 @@ class HomeView extends StatelessWidget {
                   (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        // الانتقال لشاشة التفاصيل وإرسال رقم المنتج
                         Navigator.pushNamed(
                           context, 
                           AppRoutes.productDetails,
@@ -220,7 +211,6 @@ class HomeView extends StatelessWidget {
                 ),
               ),
             ),
-            
             const SliverToBoxAdapter(child: SizedBox(height: 30)),
           ],
         ),

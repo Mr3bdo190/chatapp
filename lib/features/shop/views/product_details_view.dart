@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/routes/app_routes.dart';
 
 class ProductDetailsView extends StatelessWidget {
-  final String? productId; // هنستقبله بعدين لما نربط بـ Firebase
+  final String? productId;
 
   const ProductDetailsView({Key? key, this.productId}) : super(key: key);
 
@@ -10,7 +11,6 @@ class ProductDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppConstants.backgroundColor,
-      // زرار الطلب الثابت في أسفل الشاشة
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -29,7 +29,8 @@ class ProductDetailsView extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    // سيتم برمجة إضافة للسلة أو الطلب المباشر
+                    // الانتقال المباشر لصفحة إتمام الطلب
+                    Navigator.pushNamed(context, AppRoutes.checkout);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppConstants.secondaryColor,
@@ -56,7 +57,8 @@ class ProductDetailsView extends StatelessWidget {
                 child: IconButton(
                   icon: const Icon(Icons.add_shopping_cart, color: AppConstants.primaryColor),
                   onPressed: () {
-                    // إضافة للسلة
+                    // الانتقال لسلة المشتريات
+                    Navigator.pushNamed(context, AppRoutes.cart);
                   },
                 ),
               )
@@ -67,7 +69,6 @@ class ProductDetailsView extends StatelessWidget {
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          // 1. صورة المنتج بخاصية الـ Slivers
           SliverAppBar(
             expandedHeight: 350,
             pinned: true,
@@ -81,9 +82,15 @@ class ProductDetailsView extends StatelessWidget {
                 ),
               ),
             ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart_outlined, color: AppConstants.primaryColor),
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.cart);
+                },
+              ),
+            ],
           ),
-
-          // 2. تفاصيل المنتج
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.all(20.0),
@@ -94,7 +101,6 @@ class ProductDetailsView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // اسم المنتج والسعر
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,8 +127,6 @@ class ProductDetailsView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-
-                  // التقييم (وهمي حالياً)
                   Row(
                     children: [
                       const Icon(Icons.star, color: Colors.amber, size: 20),
@@ -137,8 +141,6 @@ class ProductDetailsView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 24),
-
-                  // وصف المنتج
                   const Text(
                     'وصف المنتج',
                     style: TextStyle(
@@ -149,14 +151,14 @@ class ProductDetailsView extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد.',
+                    'هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق.',
                     style: TextStyle(
                       fontSize: 14,
                       color: AppConstants.textSecondary,
                       height: 1.6,
                     ),
                   ),
-                  const SizedBox(height: 40), // مسافة فارغة أسفل الوصف
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
