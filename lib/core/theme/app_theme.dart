@@ -27,7 +27,7 @@ class AppTheme {
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppConstants.cardColor,
         elevation: 2,
         shadowColor: Colors.black.withOpacity(0.05),
