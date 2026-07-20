@@ -26,26 +26,17 @@ class HomeView extends StatelessWidget {
                 ),
               ),
               actions: [
+                // زرار تتبع الطلبات
                 IconButton(
                   icon: const Icon(Icons.local_shipping_outlined, color: AppConstants.primaryColor),
                   onPressed: () {
                     Navigator.pushNamed(context, AppRoutes.trackOrder);
                   },
-                );
-                //
-                  icon: const Icon(Icons.search, color: AppConstants.primaryColor),
-                  onPressed: () {},
                 ),
+                // زرار سلة المشتريات
                 IconButton(
-                  icon: const Icon(Icons.local_shipping_outlined, color: AppConstants.primaryColor),
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.trackOrder);
-                  },
-                );
-                //
                   icon: const Icon(Icons.shopping_cart_outlined, color: AppConstants.primaryColor),
                   onPressed: () {
-                    // الانتقال لسلة المشتريات
                     Navigator.pushNamed(context, AppRoutes.cart);
                   },
                 ),
