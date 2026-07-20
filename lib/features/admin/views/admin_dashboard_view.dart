@@ -59,7 +59,7 @@ class AdminDashboardView extends StatelessWidget {
               subtitle: 'مراجعة وتحديث حالات طلبات العملاء',
               icon: Icons.local_shipping_outlined,
               onTap: () {
-                // سيتم إضافة مسار صفحة إدارة الطلبات لاحقاً
+                Navigator.pushNamed(context, AppRoutes.manageOrders);
               },
             ),
             const SizedBox(height: 12),
@@ -69,7 +69,7 @@ class AdminDashboardView extends StatelessWidget {
               subtitle: 'إضافة، تعديل، أو حذف المنتجات والأقسام',
               icon: Icons.add_box_outlined,
               onTap: () {
-                // سيتم إضافة مسار صفحة إضافة المنتجات لاحقاً
+                Navigator.pushNamed(context, AppRoutes.addProduct);
               },
             ),
           ],

@@ -5,6 +5,8 @@ import '../../features/shop/views/cart_view.dart';
 import '../../features/shop/views/checkout_view.dart';
 import '../../features/tracking/views/track_order_view.dart';
 import '../../features/admin/views/admin_dashboard_view.dart';
+import '../../features/admin/views/add_product_view.dart';
+import '../../features/admin/views/manage_orders_view.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -13,6 +15,8 @@ class AppRoutes {
   static const String checkout = '/checkout';
   static const String trackOrder = '/track_order';
   static const String admin = '/admin';
+  static const String addProduct = '/add_product';
+  static const String manageOrders = '/manage_orders';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -29,6 +33,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const TrackOrderView());
       case admin:
         return MaterialPageRoute(builder: (_) => const AdminDashboardView());
+      case addProduct:
+        return MaterialPageRoute(builder: (_) => const AddProductView());
+      case manageOrders:
+        return MaterialPageRoute(builder: (_) => const ManageOrdersView());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
