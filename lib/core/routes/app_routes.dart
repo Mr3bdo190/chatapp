@@ -4,6 +4,7 @@ import '../../features/shop/views/product_details_view.dart';
 import '../../features/shop/views/cart_view.dart';
 import '../../features/shop/views/checkout_view.dart';
 import '../../features/tracking/views/track_order_view.dart';
+import '../../features/admin/views/admin_dashboard_view.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -27,7 +28,7 @@ class AppRoutes {
       case trackOrder:
         return MaterialPageRoute(builder: (_) => const TrackOrderView());
       case admin:
-        return MaterialPageRoute(builder: (_) => const Scaffold(body: Center(child: Text('لوحة الإدارة'))));
+        return MaterialPageRoute(builder: (_) => const AdminDashboardView());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
