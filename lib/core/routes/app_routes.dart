@@ -7,8 +7,12 @@ import '../../features/tracking/views/track_order_view.dart';
 import '../../features/admin/views/admin_dashboard_view.dart';
 import '../../features/admin/views/add_product_view.dart';
 import '../../features/admin/views/manage_orders_view.dart';
+import '../../features/auth/views/login_view.dart';
+import '../../features/auth/views/signup_view.dart';
 
 class AppRoutes {
+  static const String login = '/login';
+  static const String signup = '/signup';
   static const String home = '/';
   static const String productDetails = '/product_details';
   static const String cart = '/cart';
@@ -20,6 +24,10 @@ class AppRoutes {
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case login:
+        return MaterialPageRoute(builder: (_) => const LoginView());
+      case signup:
+        return MaterialPageRoute(builder: (_) => const SignupView());
       case home:
         return MaterialPageRoute(builder: (_) => const MainLayout());
       case productDetails:
@@ -38,11 +46,7 @@ class AppRoutes {
       case manageOrders:
         return MaterialPageRoute(builder: (_) => const ManageOrdersView());
       default:
-        return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(child: Text('الصفحة غير موجودة: ${settings.name}')),
-          ),
-        );
+        return MaterialPageRoute(builder: (_) => const LoginView());
     }
   }
 }

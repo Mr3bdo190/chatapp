@@ -25,7 +25,7 @@ class AffiliateStoreApp extends StatelessWidget {
       title: 'Mr Shop',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.home,
+      initialRoute: AppRoutes.login,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

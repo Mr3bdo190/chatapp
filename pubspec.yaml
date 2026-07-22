@@ -10,12 +10,12 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  # حزم فايربيز لقاعدة البيانات
   firebase_core: ^2.32.0
   cloud_firestore: ^4.17.5
-  # حزم رفع الصور و Cloudinary
+  firebase_auth: ^4.15.3
   image_picker: ^1.1.2
   http: ^1.2.1
+  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:
