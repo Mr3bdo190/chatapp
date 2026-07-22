@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:firebase_core/firebase_core.dart'; // هنفعلها بعد إضافة ملف فايربيز
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'core/theme/app_theme.dart';
 import 'core/routes/app_routes.dart';
 
@@ -7,7 +8,10 @@ void main() async {
   // تهيئة النظام قبل تشغيل التطبيق
   WidgetsFlutterBinding.ensureInitialized();
   
-  // await Firebase.initializeApp(); // سيتم تفعيلها فور إضافة ملف google-services.json
+  // تهيئة فايربيز باستخدام الكود مباشرة لتجنب أخطاء البناء
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   
   runApp(const AffiliateStoreApp());
 }
