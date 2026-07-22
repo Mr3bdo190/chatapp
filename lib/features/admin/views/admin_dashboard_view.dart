@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'admin_orders_view.dart';
+import 'admin_add_product_view.dart';
 
 class AdminDashboardView extends StatelessWidget {
   const AdminDashboardView({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class AdminDashboardView extends StatelessWidget {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminOrdersView()));
             }),
             _buildCard(context, 'المنتجات', Icons.inventory, Colors.green, () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('سيتم برمجتها قريباً!')));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminAddProductView()));
             }),
             _buildCard(context, 'المستخدمين', Icons.people, Colors.orange, () {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('سيتم برمجتها قريباً!')));
