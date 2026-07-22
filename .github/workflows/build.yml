@@ -17,32 +17,28 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Install Dependencies
-        run: flutter pub get
+      - name: Install & Upgrade Dependencies
+        run: |
+          flutter pub get
+          flutter pub upgrade
 
       - name: Generate Android Files
         run: flutter create . --platforms android
 
-      - name: Force SDK 34 Globally for All Plugins
+      - name: Fix App SDK Version
         run: |
-          # 1. إنشاء ملف يجبر كل المشاريع الفرعية على استخدام SDK 34
-          echo "subprojects {" > android/force-sdk.gradle
-          echo "    afterEvaluate { project ->" >> android/force-sdk.gradle
-          echo "        if (project.hasProperty('android')) {" >> android/force-sdk.gradle
-          echo "            project.android {" >> android/force-sdk.gradle
-          echo "                compileSdkVersion 34" >> android/force-sdk.gradle
-          echo "                targetSdkVersion 34" >> android/force-sdk.gradle
-          echo "            }" >> android/force-sdk.gradle
-          echo "        }" >> android/force-sdk.gradle
-          echo "    }" >> android/force-sdk.gradle
-          echo "}" >> android/force-sdk.gradle
-          
-          # 2. حقن هذا الملف في الجذر (سواء كان بصيغة kts الجديدة أو gradle القديمة)
-          if [ -f android/build.gradle.kts ]; then
-            echo "apply(from = \"force-sdk.gradle\")" >> android/build.gradle.kts
-          elif [ -f android/build.gradle ]; then
-            echo "apply from: 'force-sdk.gradle'" >> android/build.gradle
-          fi
+          find android -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -exec sed -i 's/compileSdk = .*/compileSdk = 34/g' {} + || true
+          find android -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -exec sed -i 's/compileSdkVersion = .*/compileSdkVersion = 34/g' {} + || true
+          find android -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -exec sed -i 's/compileSdkVersion .*/compileSdkVersion 34/g' {} + || true
+
+      - name: Ultimate Hack - Patch Firebase Plugins in Pub Cache
+        run: |
+          # العثور على مسار الكاش الخاص بحزم فلاتر وتعديل الكود المصدري للحزم من جذوره
+          PUB_DIR=$(dirname $(which flutter))/../.pub-cache
+          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdkVersion 33/compileSdkVersion 34/g' || true
+          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdk 33/compileSdk 34/g' || true
+          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdkVersion 32/compileSdkVersion 34/g' || true
+          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdk 32/compileSdk 34/g' || true
 
       - name: Build APK
         run: flutter build apk --release
