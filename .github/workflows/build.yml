@@ -27,18 +27,18 @@ jobs:
 
       - name: Fix App SDK Version
         run: |
-          find android -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -exec sed -i 's/compileSdk = .*/compileSdk = 34/g' {} + || true
-          find android -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -exec sed -i 's/compileSdkVersion = .*/compileSdkVersion = 34/g' {} + || true
-          find android -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -exec sed -i 's/compileSdkVersion .*/compileSdkVersion 34/g' {} + || true
+          find android -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -exec sed -i 's/compileSdk = .*/compileSdk = 36/g' {} + || true
+          find android -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -exec sed -i 's/compileSdkVersion = .*/compileSdkVersion = 36/g' {} + || true
+          find android -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -exec sed -i 's/compileSdkVersion .*/compileSdkVersion 36/g' {} + || true
 
       - name: Ultimate Hack - Patch Firebase Plugins in Pub Cache
         run: |
           # العثور على مسار الكاش الخاص بحزم فلاتر وتعديل الكود المصدري للحزم من جذوره
           PUB_DIR=$(dirname $(which flutter))/../.pub-cache
-          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdkVersion 33/compileSdkVersion 34/g' || true
-          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdk 33/compileSdk 34/g' || true
-          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdkVersion 32/compileSdkVersion 34/g' || true
-          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdk 32/compileSdk 34/g' || true
+          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdkVersion 33/compileSdkVersion 36/g' || true
+          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdk 33/compileSdk 36/g' || true
+          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdkVersion 32/compileSdkVersion 36/g' || true
+          find ~/.pub-cache "$PUB_DIR" -type f -name "build.gradle" 2>/dev/null | xargs sed -i 's/compileSdk 32/compileSdk 36/g' || true
 
       - name: Build APK
         run: flutter build apk --release
