@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/package:firebase_auth.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/custom_snackbar.dart';
+import '../../../core/services/auth_service.dart';
+import '../../../core/routes/app_routes.dart';
 
 class SignupView extends StatefulWidget {
   const SignupView({Key? key}) : super(key: key);
@@ -13,6 +17,38 @@ class _SignupViewState extends State<SignupView> {
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _handleSignup() async {
+    if (_nameController.text.isEmpty || _phoneController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      CustomSnackbar.show(context: context, message: 'يرجى ملء جميع الحقول', isError: true);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    
+    try {
+      await AuthService().signUp(
+        name: _nameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      
+      if (!mounted) return;
+      CustomSnackbar.show(context: context, message: 'تم إنشاء الحساب بنجاح!');
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'حدث خطأ في التسجيل';
+      if (e.code == 'weak-password') errorMessage = 'كلمة المرور ضعيفة جداً';
+      if (e.code == 'email-already-in-use') errorMessage = 'البريد الإلكتروني مسجل مسبقاً';
+      CustomSnackbar.show(context: context, message: errorMessage, isError: true);
+    } catch (e) {
+      CustomSnackbar.show(context: context, message: 'حدث خطأ غير متوقع', isError: true);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +78,11 @@ class _SignupViewState extends State<SignupView> {
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed: () {
-                  // سيتم ربطها بـ Firebase Auth
-                },
+                onPressed: _isLoading ? null : _handleSignup,
                 style: ElevatedButton.styleFrom(backgroundColor: AppConstants.secondaryColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                child: const Text('تسجيل الحساب', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: _isLoading 
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('تسجيل الحساب', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
             ),
           ],

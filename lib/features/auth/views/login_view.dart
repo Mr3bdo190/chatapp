@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/package:firebase_auth.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/custom_snackbar.dart';
+import '../../../core/services/auth_service.dart';
 import '../../../core/routes/app_routes.dart';
 
 class LoginView extends StatefulWidget {
@@ -13,6 +16,36 @@ class _LoginViewState extends State<LoginView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
+
+  Future<void> _handleLogin() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      CustomSnackbar.show(context: context, message: 'يرجى إدخال البريد وكلمة المرور', isError: true);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    
+    try {
+      final userCred = await AuthService().login(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      
+      if (!mounted) return;
+      
+      // توجيه مبدئي للشاشة الرئيسية (المرحلة القادمة هنفصل التابات جوه الـ MainLayout حسب الرول)
+      CustomSnackbar.show(context: context, message: 'مرحباً بعودتك!');
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+      
+    } on FirebaseAuthException catch (e) {
+      CustomSnackbar.show(context: context, message: 'بيانات الدخول غير صحيحة', isError: true);
+    } catch (e) {
+      CustomSnackbar.show(context: context, message: 'حدث خطأ غير متوقع', isError: true);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +73,6 @@ class _LoginViewState extends State<LoginView> {
               const Text('مرحباً بك مجدداً! يرجى إدخال بياناتك', style: TextStyle(color: AppConstants.textSecondary)),
               const SizedBox(height: 32),
               
-              // Email
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -52,7 +84,6 @@ class _LoginViewState extends State<LoginView> {
               ),
               const SizedBox(height: 16),
               
-              // Password
               TextField(
                 controller: _passwordController,
                 obscureText: !_isPasswordVisible,
@@ -68,24 +99,22 @@ class _LoginViewState extends State<LoginView> {
               ),
               const SizedBox(height: 24),
               
-              // Login Button
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // سيتم ربطها بـ Firebase Auth في الخطوة القادمة
-                  },
+                  onPressed: _isLoading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppConstants.primaryColor,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text('تسجيل الدخول', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  child: _isLoading 
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('تسجيل الدخول', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(height: 24),
               
-              // Register Link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
