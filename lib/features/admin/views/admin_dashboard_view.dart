@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/package:firebase_auth.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/routes/app_routes.dart';
 
@@ -14,9 +15,12 @@ class AdminDashboardView extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.redAccent),
-            tooltip: 'خروج كأدمن',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, AppRoutes.home);
+            tooltip: 'تسجيل خروج',
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              if (context.mounted) {
+                Navigator.pushReplacementNamed(context, AppRoutes.login);
+              }
             },
           )
         ],
@@ -31,7 +35,6 @@ class AdminDashboardView extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppConstants.textPrimary),
             ),
             const SizedBox(height: 16),
-            // كروت الإحصائيات السريعة
             Row(
               children: [
                 Expanded(child: _buildStatCard('الطلبات', '150', Icons.shopping_bag_outlined, Colors.blue)),
@@ -58,9 +61,7 @@ class AdminDashboardView extends StatelessWidget {
               title: 'إدارة الطلبات',
               subtitle: 'مراجعة وتحديث حالات طلبات العملاء',
               icon: Icons.local_shipping_outlined,
-              onTap: () {
-                Navigator.pushNamed(context, AppRoutes.manageOrders);
-              },
+              onTap: () => Navigator.pushNamed(context, AppRoutes.manageOrders),
             ),
             const SizedBox(height: 12),
             _buildActionTile(
@@ -68,8 +69,16 @@ class AdminDashboardView extends StatelessWidget {
               title: 'إدارة المنتجات',
               subtitle: 'إضافة، تعديل، أو حذف المنتجات والأقسام',
               icon: Icons.add_box_outlined,
+              onTap: () => Navigator.pushNamed(context, AppRoutes.addProduct),
+            ),
+            const SizedBox(height: 12),
+            _buildActionTile(
+              context,
+              title: 'إدارة المستخدمين (جديد)',
+              subtitle: 'عرض بيانات العملاء ومشترياتهم السابقة',
+              icon: Icons.people_outline,
               onTap: () {
-                Navigator.pushNamed(context, AppRoutes.addProduct);
+                // سيتم برمجتها في الخطوة القادمة
               },
             ),
           ],
@@ -78,20 +87,13 @@ class AdminDashboardView extends StatelessWidget {
     );
   }
 
-  // ويدجت كارت الإحصائيات
   Widget _buildStatCard(String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,18 +112,13 @@ class AdminDashboardView extends StatelessWidget {
     );
   }
 
-  // ويدجت أزرار التحكم السريع
   Widget _buildActionTile(BuildContext context, {required String title, required String subtitle, required IconData icon, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200),
-        ),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade200)),
         child: Row(
           children: [
             Container(
