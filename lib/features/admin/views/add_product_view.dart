@@ -29,11 +29,10 @@ class _AddProductViewState extends State<AddProductView> {
   File? _imageFile;
   String? _uploadedImageUrl;
 
-  // بيانات Cloudinary الخاصة بك
-  final String cloudName = 'dtriqbtas';
-  final String uploadPreset = 'Memory';
+  // تم تصحيح اسم السحابة بناءً على مراجعتك يا رياسة
+  final String cloudName = 'dtrtgbtss'; 
+  final String uploadPreset = 'Memory'; 
 
-  // دالة اختيار ورفع الصورة
   Future<void> _pickAndUploadImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     
@@ -57,7 +56,7 @@ class _AddProductViewState extends State<AddProductView> {
 
         if (response.statusCode == 200) {
           setState(() {
-            _uploadedImageUrl = jsonMap['secure_url']; // الحصول على الرابط الآمن
+            _uploadedImageUrl = jsonMap['secure_url'];
             _isUploadingImage = false;
           });
           if (mounted) {
@@ -66,7 +65,12 @@ class _AddProductViewState extends State<AddProductView> {
             );
           }
         } else {
-          throw Exception(jsonMap['error']['message'] ?? 'فشل الرفع');
+          String errorMsg = jsonMap['error']['message'] ?? 'فشل الرفع';
+          if (errorMsg.contains('Unknown API key')) {
+            throw Exception('تأكد من مطابقة اسم السحابة واسم الـ Preset وأنه Unsigned في Cloudinary');
+          } else {
+            throw Exception(errorMsg);
+          }
         }
       } catch (e) {
         setState(() {
@@ -75,14 +79,13 @@ class _AddProductViewState extends State<AddProductView> {
         });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('حدث خطأ أثناء رفع الصورة: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text('$e'), backgroundColor: Colors.red),
           );
         }
       }
     }
   }
 
-  // دالة حفظ المنتج في فايربيز
   Future<void> _saveProductToFirebase() async {
     if (_formKey.currentState!.validate()) {
       if (_uploadedImageUrl == null) {
@@ -100,7 +103,7 @@ class _AddProductViewState extends State<AddProductView> {
           'price': double.parse(_priceController.text.trim()),
           'category': _selectedCategory,
           'description': _descController.text.trim(),
-          'image': _uploadedImageUrl, // ربط الصورة الحقيقية المرفوعة
+          'image': _uploadedImageUrl,
           'rating': '5.0', 
           'createdAt': FieldValue.serverTimestamp(),
         });
@@ -168,7 +171,6 @@ class _AddProductViewState extends State<AddProductView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // مساحة رفع الصورة
               GestureDetector(
                 onTap: _isUploadingImage ? null : _pickAndUploadImage,
                 child: Container(
@@ -197,7 +199,6 @@ class _AddProductViewState extends State<AddProductView> {
                 ),
               ),
               const SizedBox(height: 24),
-
               const Text('تفاصيل المنتج', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppConstants.textPrimary)),
               const SizedBox(height: 16),
               _buildTextField(label: 'اسم المنتج', hint: 'مثال: ساعة ذكية X Pro', controller: _nameController),
