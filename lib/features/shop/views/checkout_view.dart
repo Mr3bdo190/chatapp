@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/cart_service.dart';
 
 class CheckoutView extends StatefulWidget {
   const CheckoutView({Key? key}) : super(key: key);
@@ -16,6 +17,14 @@ class _CheckoutViewState extends State<CheckoutView> {
   bool _isLoading = false;
 
   Future<void> _submitOrder() async {
+    final cart = CartService();
+    if (cart.items.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('السلة فارغة!')),
+      );
+      return;
+    }
+
     if (_addressController.text.trim().isEmpty || _phoneController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('برجاء إدخال عنوان الاستلام ورقم الهاتف')),
@@ -29,21 +38,27 @@ class _CheckoutViewState extends State<CheckoutView> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) throw Exception('يجب تسجيل الدخول أولاً');
 
-      // إنشاء الطلب في قاعدة البيانات
+      // إرسال الطلب مع تفاصيل المنتجات والمبلغ الإجمالي لقاعدة البيانات
       await FirebaseFirestore.instance.collection('orders').add({
         'userId': user.uid,
         'customerPhone': _phoneController.text.trim(),
         'shippingAddress': _addressController.text.trim(),
-        'status': 'pending', // حالة الطلب: قيد المراجعة
+        'items': cart.items,
+        'totalAmount': cart.totalPrice,
+        'status': 'pending',
         'createdAt': FieldValue.serverTimestamp(),
-        // ملاحظة: سيتم دمج تفاصيل السلة (المنتجات والسعر) هنا لاحقاً
       });
+
+      // تفريغ السلة بعد نجاح الطلب
+      cart.clearCart();
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('تم إرسال طلبك بنجاح! 🚀', style: TextStyle(fontWeight: FontWeight.bold))),
       );
-      Navigator.pop(context); // العودة للشاشة السابقة
+      
+      // الرجوع للشاشة الرئيسية وتفريغ شاشات السلة
+      Navigator.popUntil(context, (route) => route.isFirst);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('حدث خطأ: ${e.toString()}')),
@@ -62,6 +77,7 @@ class _CheckoutViewState extends State<CheckoutView> {
 
   @override
   Widget build(BuildContext context) {
+    final cart = CartService();
     return Scaffold(
       backgroundColor: AppConstants.backgroundColor,
       appBar: AppBar(
@@ -72,11 +88,20 @@ class _CheckoutViewState extends State<CheckoutView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(12)),
+              child: Text(
+                'إجمالي المنتجات المطلوبة: ${cart.totalPrice} ج.م',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppConstants.primaryColor),
+              ),
+            ),
+            const SizedBox(height: 20),
             const Text(
               'بيانات الاستلام',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppConstants.textPrimary),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             TextField(
               controller: _addressController,
               decoration: InputDecoration(
