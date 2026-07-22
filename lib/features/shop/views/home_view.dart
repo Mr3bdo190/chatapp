@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/routes/app_routes.dart';
 
@@ -7,34 +8,6 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // داتا المنتجات مطابقة للصورة لتوضيح التصميم
-    final List<Map<String, String>> products = [
-      {
-        'name': 'Apple iPhone 13\n(سعة 128 جيجابايت)',
-        'price': '350.00 ج.م',
-        'rating': '4.5',
-        'image': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=500' // صورة موبايل
-      },
-      {
-        'name': 'Samsung Galaxy Watch 5\n',
-        'price': '350.00 ج.م',
-        'rating': '4.7',
-        'image': 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=500' // صورة ساعة
-      },
-      {
-        'name': 'حقيبة ظهر كلاسيكية\nمقاومة للماء',
-        'price': '250.00 ج.م',
-        'rating': '4.2',
-        'image': 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=500' // صورة حقيبة
-      },
-      {
-        'name': 'عطر ديور سوفاج\n(للرجال)',
-        'price': '1200.00 ج.م',
-        'rating': '4.9',
-        'image': 'https://images.unsplash.com/photo-1594034181428-4e0d0e53c083?q=80&w=500' // صورة عطر
-      },
-    ];
-
     return Scaffold(
       backgroundColor: AppConstants.backgroundColor,
       appBar: AppBar(
@@ -84,7 +57,7 @@ class HomeView extends StatelessWidget {
               child: Text('تصفح بالأقسام', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppConstants.textPrimary)),
             ),
 
-            // 3. شريط الأقسام (تصميم الـ Chips)
+            // 3. شريط الأقسام
             SizedBox(
               height: 45,
               child: ListView.builder(
@@ -122,74 +95,110 @@ class HomeView extends StatelessWidget {
               child: Text('أحدث المنتجات', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppConstants.textPrimary)),
             ),
 
-            // 5. شبكة المنتجات (مطابقة للصورة)
+            // 5. شبكة المنتجات الحقيقية من Firebase (StreamBuilder)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.62, // تم ضبطه لاحتواء الصورة والنصوص بوضوح
-                ),
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  final product = products[index];
-                  return GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, AppRoutes.productDetails, arguments: 'prod_${index + 1}'),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4))
-                        ],
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance.collection('products').orderBy('createdAt', descending: true).snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(40.0),
+                        child: CircularProgressIndicator(color: AppConstants.primaryColor),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                              child: Image.network(product['image']!, fit: BoxFit.cover, width: double.infinity),
-                            ),
+                    );
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(40.0),
+                        child: Text(
+                          'لا توجد منتجات مضافة حالياً.\nأضف منتجك الأول من لوحة التحكم!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppConstants.textSecondary, fontSize: 16),
+                        ),
+                      ),
+                    );
+                  }
+
+                  final docs = snapshot.data!.docs;
+
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 0.62,
+                    ),
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      final product = docs[index].data() as Map<String, dynamic>;
+                      final productId = docs[index].id;
+                      
+                      return GestureDetector(
+                        onTap: () => Navigator.pushNamed(context, AppRoutes.productDetails, arguments: productId),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4))
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  product['name']!,
-                                  style: const TextStyle(fontWeight: FontWeight.bold, color: AppConstants.textPrimary, fontSize: 13),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                  child: Image.network(
+                                    product['image'] ?? 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=500',
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
+                                  ),
                                 ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      product['price']!,
-                                      style: const TextStyle(color: AppConstants.primaryColor, fontWeight: FontWeight.w900, fontSize: 14),
+                                      product['name'] ?? 'بدون اسم',
+                                      style: const TextStyle(fontWeight: FontWeight.bold, color: AppConstants.textPrimary, fontSize: 13),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
+                                    const SizedBox(height: 12),
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Icon(Icons.star, color: Colors.amber, size: 14),
-                                        const SizedBox(width: 2),
-                                        Text(product['rating']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                                        Text(
+                                          '${product['price']} ج.م',
+                                          style: const TextStyle(color: AppConstants.primaryColor, fontWeight: FontWeight.w900, fontSize: 14),
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Icon(Icons.star, color: Colors.amber, size: 14),
+                                            const SizedBox(width: 2),
+                                            Text(product['rating'] ?? '5.0', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
