@@ -1,5 +1,5 @@
 name: affiliate_store
-description: تطبيق محادثات جذاب مع استيراد واتساب
+description: A new Flutter project.
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,14 +9,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  whats_json: ^1.0.0      # لتحليل ملفات واتساب
-  provider: ^6.1.0        # لإدارة الحالة
-  intl: ^0.19.0           # لتنسيق التواريخ
-  google_fonts: ^6.2.1    # للخطوط الجميلة
+  cupertino_icons: ^1.0.2
+  # حزم فايربيز لقاعدة البيانات
+  firebase_core: ^2.32.0
+  cloud_firestore: ^4.17.5
+  # حزم رفع الصور و Cloudinary
+  image_picker: ^1.1.2
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
