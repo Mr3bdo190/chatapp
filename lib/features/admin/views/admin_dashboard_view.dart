@@ -78,7 +78,7 @@ class AdminDashboardView extends StatelessWidget {
               subtitle: 'عرض بيانات العملاء ومشترياتهم السابقة',
               icon: Icons.people_outline,
               onTap: () {
-                // سيتم برمجتها في الخطوة القادمة
+                Navigator.pushNamed(context, AppRoutes.manageUsers);
               },
             ),
           ],

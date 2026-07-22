@@ -7,6 +7,7 @@ import '../../features/tracking/views/track_order_view.dart';
 import '../../features/admin/views/admin_dashboard_view.dart';
 import '../../features/admin/views/add_product_view.dart';
 import '../../features/admin/views/manage_orders_view.dart';
+import '../../features/admin/views/manage_users_view.dart';
 import '../../features/auth/views/login_view.dart';
 import '../../features/auth/views/signup_view.dart';
 
@@ -21,6 +22,7 @@ class AppRoutes {
   static const String admin = '/admin';
   static const String addProduct = '/add_product';
   static const String manageOrders = '/manage_orders';
+  static const String manageUsers = '/manage_users';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -45,6 +47,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const AddProductView());
       case manageOrders:
         return MaterialPageRoute(builder: (_) => const ManageOrdersView());
+      case manageUsers:
+        return MaterialPageRoute(builder: (_) => const ManageUsersView());
       default:
         return MaterialPageRoute(builder: (_) => const LoginView());
     }
