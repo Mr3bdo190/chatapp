@@ -1,3 +1,4 @@
+import 'categories_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/constants/app_constants.dart';
@@ -46,7 +47,7 @@ class _MainLayoutState extends State<MainLayout> {
 
   List<Widget> get _pages => [
     const HomeView(),
-    const Scaffold(body: Center(child: Text('الأقسام (قريباً)'))),
+    const CategoriesView(),
     const TrackOrderView(),
     const CartView(),
     _isAdmin ? const AdminDashboardView() : const ProfileView(),
