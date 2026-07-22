@@ -41,7 +41,7 @@ class _LoginViewState extends State<LoginView> {
     } on FirebaseAuthException catch (e) {
       CustomSnackbar.show(context: context, message: 'بيانات الدخول غير صحيحة', isError: true);
     } catch (e) {
-      CustomSnackbar.show(context: context, message: 'حدث خطأ غير متوقع', isError: true);
+      CustomSnackbar.show(context: context, message: e.toString(), isError: true);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
